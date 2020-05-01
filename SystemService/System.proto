@@ -1,0 +1,23 @@
+﻿
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package NationalInstruments.ApplicationsEngineering.Services.System;
+
+service SystemService {
+    rpc Identify(google.protobuf.Empty) returns (SystemIdentity) {}
+}
+
+message InstrumentIdentity {
+    string Name = 1;
+    string Model = 2;
+    string SerialNumber = 3;
+    int32 SlotNumber = 4;
+}
+
+message SystemIdentity {
+    string MachineName = 1;
+    string OSVersion = 2;
+    repeated InstrumentIdentity InstrumentIdentities = 3;
+}

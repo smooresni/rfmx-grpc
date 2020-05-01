@@ -1,0 +1,250 @@
+﻿
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package NationalInstruments.ApplicationsEngineering.Services.RFmxGrpc;
+
+service RFmxService {
+    // Instr
+    rpc Initialize(RFmxResource) returns (RFmxSession) {}
+    rpc GetDefaultInstrumentConfiguration(RFmxSession) returns (RFmxInstrumentConfiguration) {}
+    rpc ConfigureInstrument(RFmxInstrumentConfiguration) returns (google.protobuf.Empty) {}
+    rpc Close(RFmxSession) returns (google.protobuf.Empty) {}
+    rpc ForceClose(RFmxSession) returns (google.protobuf.Empty) {}
+    
+    // Common
+    rpc GetDefaultCommonConfiguration(RFmxSession) returns (RFmxCommonConfiguration) {}
+    rpc GetDefaultAutoLevelConfiguration(google.protobuf.Empty) returns (RFmxAutoLevelConfiguration) {}
+
+    // NR
+    rpc NRGetDefaultComponentCarrierConfiguration(google.protobuf.Empty) returns (RFmxNRComponentCarrierConfiguration) {}
+    rpc NRGetDefaultStandardConfiguration(RFmxSession) returns (RFmxNRStandardConfiguration) {}
+    rpc NRGetDefaultModAccConfiguration(RFmxSession) returns (RFmxNRModAccConfiguration) {}
+    rpc NRGetDefaultAcpConfiguration(RFmxSession) returns (RFmxNRAcpConfiguration) {}
+    
+    rpc NRConfigureCommon(RFmxCommonConfiguration) returns (google.protobuf.Empty) {}
+    rpc NRConfigureStandard(RFmxNRStandardConfiguration) returns (google.protobuf.Empty) {}
+    rpc NRConfigureModAcc(RFmxNRModAccConfiguration) returns (google.protobuf.Empty) {}
+    rpc NRConfigureAcp(RFmxNRAcpConfiguration) returns (google.protobuf.Empty) {}
+    rpc NRSelectAndInitiateMeasurements(RFmxNRMeasurementConfiguration) returns (google.protobuf.Empty) {}
+    rpc NRFetchModAccResults(RFmxResultQuery) returns (RFmxNRModAccResults) {}
+    rpc NRFetchAcpResults(RFmxResultQuery) returns (RFmxNRAcpResults) {}
+}
+
+message RFmxResource {
+    string Name = 1;
+    string OptionString = 2;
+}
+
+message RFmxSession {
+    int64 Handle = 1;
+}
+
+message RFmxResultQuery {
+    RFmxSession Session = 1;
+    string SignalName = 2;
+    string SelectorString = 3;
+}
+
+message RFmxInstrumentConfiguration {
+    RFmxSession Session = 1;
+    enum LocalOscillatorSharingMode {
+        AUTOMATIC = 0;
+        NONE = 1;
+	}
+    LocalOscillatorSharingMode LOSharingMode = 2;
+    string FrequencyReferenceSource = 3;
+}
+
+message RFmxCommonConfiguration {
+    RFmxSession Session = 1;
+    string SignalName = 2;
+    string SelectorString = 3;
+    double CenterFrequency_Hz = 4;
+    double ReferenceLevel_dBm = 5;
+    double ExternalAttenuation_dB = 6;
+    string SelectedPorts = 7;
+    bool TriggerEnabled = 8;
+    string DigitalTriggerSource = 9;
+    double TriggerDelay_s = 10;
+}
+
+message RFmxAutoLevelConfiguration {
+    bool Enabled = 1;
+    double MeasurementInterval = 2;
+}
+
+message RFmxNRComponentCarrierConfiguration {
+    double Bandwidth_Hz = 1;
+    int32 CellId = 2;
+    enum RFmxNRMXPuschModulationType {
+        PiBy2_Bpsk = 0;
+        Qpsk = 1;
+        Qam16 = 2;
+        Qam64 = 3;
+        Qam256 = 4;
+	}
+    RFmxNRMXPuschModulationType PuschModulationType = 3;
+    double SubcarrierSpacing_Hz = 4;
+    int32 PuschResourceBlockOffset = 5;
+    int32 PuschNumberOfResourceBlocks = 6;
+    bool PuschTransformPrecodingEnabled = 7;
+    string PuschSlotAllocation = 8;
+    string PuschSymbolAllocation = 9;
+    enum RFmxNRMXPuschDmrsConfigurationType {
+        TYPE1 = 0;
+        TYPE2 = 1;
+	}
+    RFmxNRMXPuschDmrsConfigurationType PuschDmrsConfigurationType = 10;
+    enum RFmxNRMXPuschMappingType {
+        TYPEA = 0;
+        TYPEB = 1;
+	}
+    RFmxNRMXPuschMappingType PuschMappingType = 11;
+    int32 PuschDmrsTypeAPosition = 12;
+    enum RFmxNRMXPuschDmrsDuration {
+        UNDEFINED = 0;
+        SINGLESYMBOL = 1;
+        DOUBLESYMBOL = 2;
+	}
+    RFmxNRMXPuschDmrsDuration PuschDmrsDuration = 13;
+    int32 PuschDmrsAdditionalPositions = 14;
+}
+
+message RFmxNRStandardConfiguration {
+    RFmxSession Session = 1;
+    string SignalName = 2;
+    string SelectorString = 3;
+    enum RFmxNRMXLinkDirection {
+        DOWNLINK = 0;
+        UPLINK = 1;
+	}
+    RFmxNRMXLinkDirection LinkDirection = 4;
+    enum RFmxNRMXFrequencyRange {
+        RANGE1 = 0;
+        RANGE2 = 1;
+	}
+    RFmxNRMXFrequencyRange FrequencyRange = 5;
+    int32 Band = 6;
+    bool AutoResourceBlockDetectionEnabled = 7;
+    enum RFmxNRMXDownlinkTestModel {
+        TM1_1 = 0;
+        TM1_2 = 1;
+        TM2 = 2;
+        TM2a = 3;
+        TM3_1 = 4;
+        TM3_1a = 5;
+        TM3_2 = 6;
+        TM3_3 = 7;
+	}
+    RFmxNRMXDownlinkTestModel DownlinkTestModel = 8;
+    enum RFmxNRMXDownlinkTestModelDuplexScheme {
+        FDD = 0;
+        TDD = 1;
+	}
+    RFmxNRMXDownlinkTestModelDuplexScheme DownlinkTestModelDuplexScheme = 9;
+    repeated RFmxNRComponentCarrierConfiguration ComponentCarrierConfigurations = 10;
+}
+
+message RFmxNRMeasurementConfiguration {
+    RFmxSession Session = 1;
+    string SignalName = 2;
+    enum RFmxNRMXMeasurementTypes {
+        UNDEFINED = 0;
+        MODACC = 1;
+        SEM = 2;
+        ACP = 4;
+        CHP = 8;
+        OBW = 16;
+        PVT = 32;
+	}
+    repeated RFmxNRMXMeasurementTypes Measurements = 3;
+    RFmxAutoLevelConfiguration AutoLevelConfiguration = 4;
+    bool EnableTraces = 5;
+    string SelectorString = 6;
+    string ResultName = 7;
+}
+
+message RFmxNRModAccConfiguration {
+    RFmxSession Session = 1;
+    string SignalName = 2;
+    string SelectorString = 3;
+    enum RFmxNRMXModAccMeasurementLengthUnit{
+        UNDEFINED = 0;
+        Slot = 1;
+        Subframe = 3;
+        Time = 6;
+	}
+    RFmxNRMXModAccMeasurementLengthUnit MeasurementLengthUnit = 4;
+    double MeasurementOffset = 5;
+    double MeasurementLength = 6;
+    enum RFmxNRMXModAccEvmUnit {
+        PERCENTAGE = 0;
+        DB = 1;
+	}
+    RFmxNRMXModAccEvmUnit EvmUnit = 7;
+    bool AveragingEnabled = 8;
+    int32 AveragingCount = 9;
+}
+
+message RFmxNRModAccComponentCarrierResults {
+    int32 PeakCompositeEvmSubcarrierIndex = 1;
+    int32 PeakCompositeEvmSymbolIndex = 2;
+    int32 PeakCompositeEvmSlotIndex = 3;
+    double MeanRmsCompositeEvm = 4;
+    double MaxPeakCompositeEvm = 5;
+    double MeanFrequencyError_Hz = 6;
+}
+
+message RFmxNRModAccResults {
+    repeated RFmxNRModAccComponentCarrierResults ComponentCarrierResults = 1;
+}
+
+message RFmxNRAcpConfiguration {
+    RFmxSession Session = 1;
+    string SignalName = 2;
+    string SelectorString = 3;
+    int32 NumberOfUtraOffsets = 4;
+    int32 NumberOfEutraOffsets = 5;
+    int32 NumberOfNrOffsets = 6;
+    int32 NumberOfEndcOffsets = 7;
+    enum RFmxNRMXAcpMeasurementMethod {
+        NORMAL = 0;
+        DYNAMICRANGE = 1;
+        SEQUENTIALFFT = 2;
+	}
+    RFmxNRMXAcpMeasurementMethod MeasurementMethod = 8;
+    bool NoiseCompensationEnabled = 9;
+    bool SweepTimeAuto = 10;
+    double SweepTimeInterval_s = 11;
+    bool AveragingEnabled = 12;
+    int32 AveragingCount = 13;
+    enum RFmxNRMXAcpAveragingType {
+        RMS = 0;
+        LOG = 1;
+        SCALAR = 2;
+        MAXIMUM = 3;
+        MINIMUM = 4;
+	}
+    RFmxNRMXAcpAveragingType AveragingType = 14;
+}
+
+message RFmxNRAcpOffsetResults {
+    double LowerAbsolutePower_dBm = 1;
+    double LowerRelativePower_dB = 2;
+    double UpperAbsolutePower_dBm = 3;
+    double UpperRelativePower_dB = 4;
+    double Frequency_Hz = 5;
+    double IntegrationBandwidth_Hz = 6;
+}
+
+message RFmxNRAcpComponentCarrierResults {
+    double AbsolutePower_dBm = 1;
+    double RelativePower_dB = 2;
+}
+
+message RFmxNRAcpResults {
+    repeated RFmxNRAcpOffsetResults OffsetResults = 1;
+    repeated RFmxNRAcpComponentCarrierResults ComponentCarrierResults = 2;
+}

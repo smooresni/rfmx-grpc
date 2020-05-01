@@ -1,0 +1,68 @@
+﻿
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package NationalInstruments.ApplicationsEngineering.Services.NIRfsgGrpc;
+
+service NIRfsgService {
+    rpc Initialize(RfsgServiceResource) returns (RfsgServiceSession) {}
+    rpc GetDefaultInstrumentConfiguration(RfsgServiceSession) returns (RfsgServiceInstrumentConfiguration) {}
+    rpc ConfigureInstrument(RfsgServiceInstrumentConfiguration) returns (google.protobuf.Empty) {}
+    rpc ReadAndDownloadWaveformFromFile(RfsgServiceWaveformDownloadConfiguration) returns (google.protobuf.Empty) {}
+    rpc ConfigureContinuousGeneration(RfsgServiceGenerationConfiguration) returns (google.protobuf.Empty) {}
+    rpc Initiate(RfsgServiceSession) returns (google.protobuf.Empty) {}
+    rpc CheckGenerationStatus(RfsgServiceSession) returns (RfsgServiceGenerationStatus) {}
+    rpc AbortGeneration(RfsgServiceTimeout) returns (google.protobuf.Empty) {}
+    rpc CloseInstrument(RfsgServiceSession) returns (google.protobuf.Empty) {}
+}
+
+message RfsgServiceResource {
+    string Name = 1;
+    bool Reset = 2;
+    bool IdQuery = 3;
+    string OptionString = 4;
+}
+
+message RfsgServiceSession {
+    int64 Handle = 1;
+}
+
+message RfsgServiceInstrumentConfiguration {
+    RfsgServiceSession Session = 1;
+    string SelectedPorts = 2;
+    string ReferenceClockSource = 3;
+    double CarrierFrequency_Hz = 4;
+    double DutAverageInputPower_dBm = 5;
+    double ExternalAttenuation_dB = 6;
+    enum LocalOscillatorSharingMode { // #todo: redundant
+        AUTOMATIC = 0;
+        NONE = 1;
+	}
+    LocalOscillatorSharingMode LOSharingMode = 7;
+}
+
+message RfsgServiceTimeout {
+    RfsgServiceSession Session = 1;
+    int32 Timeout_ms = 2;
+}
+
+message RfsgServiceWaveform {
+    string Name = 1;
+    string FilePath = 2;
+}
+
+message RfsgServiceWaveformDownloadConfiguration {
+    RfsgServiceSession Session = 1;
+    RfsgServiceWaveform Waveform = 2;
+}
+
+message RfsgServiceGenerationConfiguration {
+    RfsgServiceSession Session = 1;
+    string WaveformName = 2;
+    string MarkerEventExportTerminal = 3;
+}
+
+message RfsgServiceGenerationStatus {
+    bool Complete = 1;
+}
